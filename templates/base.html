@@ -5,35 +5,25 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Bootstrap-Flask Demo Application</title>
+    <title>Sypflix</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     {{ bootstrap.load_css() }}
-    <style>
-        pre {
-            background: #ddd;
-            padding: 10px;
-        }
-        h2 {
-            margin-top: 20px;
-        }
-        footer {
-            margin: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sypflix.css') }}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                {{ render_nav_item('index', 'Home') }}
-                <li class="nav-item"><a class="nav-link" href="https://github.com/CS-180-Group-4/Movie-Recommendation-System" target="_blank">Repository</a></li>
-            </ul>
-        </div>
+            <a class="navbar-brand" href="{{ url_for('index') }}">Sypflix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {{ render_nav_item('index', 'Home') }}
+                    <li class="nav-item"><a class="nav-link" href="https://github.com/CS-180-Group-4/Movie-Recommendation-System" target="_blank">Repository</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
     
