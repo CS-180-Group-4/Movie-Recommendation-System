@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% from 'bootstrap5/form.html' import render_form, render_field, render_form_row %}
+{% from 'bootstrap5/table.html' import render_table %}
 
 {% block content %}
     <h2>Input a Synopsis of a Movie</h2>
@@ -9,8 +10,6 @@
 
     {% if result %}
     <h2>Results</h2>
-    <div class="alert alert-info mt-3">
-      {{ result }}
-    </div>
-  {% endif %}
+    {{ render_table(result, titles, table_classes='table-striped', header_classes='thead-dark', body_classes='table-group-divider', caption='Table') }}
+    {% endif %}
 {% endblock %}

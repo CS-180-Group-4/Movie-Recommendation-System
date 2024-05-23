@@ -8,6 +8,8 @@ from wtforms.fields import *
 from flask_bootstrap import Bootstrap5, SwitchField
 from flask_sqlalchemy import SQLAlchemy
 
+import csv # temp
+
 app = Flask(__name__)
 app.secret_key = 'dev'
 
@@ -38,6 +40,12 @@ class SynopsisForm(FlaskForm):
     synopsis = TextAreaField('Synopsis', validators=[DataRequired(), Length(1, 500)])
     submit = SubmitField()
 
+def csv_to_dict_list(file_path):
+    with open(file_path, mode='r', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        dict_list = [dict(row) for row in reader]
+    return dict_list
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = SynopsisForm()
@@ -46,10 +54,20 @@ def index():
 
         # Add call to model here
 
+        # sample output
+        titles = [('USERNAME', 'Username'), 
+                    ('IDENTIFIER', 'Identifier'), 
+                    ('FIRST_NAME', 'First Name'),
+                    ('LAST_NAME', 'Last Name'),
+                ]
+        data = csv_to_dict_list('sample.csv')
+
         return render_template(
             'index.html',
             form=form,
-            button_form=ButtonForm(), result=synopsis_data
+            button_form=ButtonForm(),
+            titles=titles,
+            result=data,
         )
     return render_template(
         'index.html',
@@ -58,4 +76,4 @@ def index():
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="localhost", port=3000, debug=True)
