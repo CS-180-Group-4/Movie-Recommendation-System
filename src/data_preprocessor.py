@@ -26,27 +26,28 @@ class DataPreprocessor:
 
         return df_count
 
-    def handleDataFrame(self):
+    def handleDataFrame(self, verbose: bool=True):
         df_unique_genres = self.df_genres.drop_duplicates("id")
         self.df_movies = pd.merge(df_unique_genres, self.df_movies, on="id")
 
         self.df_movies.drop(columns=["date", "tagline", "minute", "minute"], inplace=True)
         self.df_movies = self.df_movies[self.df_movies['description'].notna()]
 
-        print("Reduced Length: ", self.df_movies.shape[0])
-        print("Reduced Columns: ", self.df_movies.columns)
+        if verbose:
+            print("Reduced Length: ", self.df_movies.shape[0])
+            print("Reduced Columns: ", self.df_movies.columns)
     
     def splitData(self, test_size: float, rand_state: int):
         assert hasattr(self.df_movies, 'description') and hasattr(self.df_movies, 'genre')
 
-        X = self.df_movies.description
+        X = self.df_movies
         y = self.df_movies.genre
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=rand_state)
 
         return X_train, X_test, y_train, y_test
     
-    def vectorizeData(self, X: pd.DataFrame, max_df: float, min_df: int, stop_words: str):
+    def vectorizeData(self, X: pd.DataFrame, max_df: float, min_df: int, stop_words: str, verbose: bool=True):
         vectorizer = TfidfVectorizer(
             max_df=max_df,
             min_df=min_df,
@@ -57,14 +58,15 @@ class DataPreprocessor:
         X_tfidf = vectorizer.fit_transform(X)
         t1 = time() - t0
 
-        print(f"Vectorized in {t1:.3f} s")
-        print(f"# of Samples: {X_tfidf.shape[0]}")
-        print(f"# of Features: {X_tfidf.shape[1]}")
-        print(f"% of Nonzero Entries: {X_tfidf.nnz / np.prod(X_tfidf.shape):.3f}")
+        if verbose:
+            print(f"Vectorized in {t1:.3f} s")
+            print(f"# of Samples: {X_tfidf.shape[0]}")
+            print(f"# of Features: {X_tfidf.shape[1]}")
+            print(f"% of Nonzero Entries: {X_tfidf.nnz / np.prod(X_tfidf.shape):.3f}")
 
         return X_tfidf, vectorizer.get_feature_names_out()
     
-    def reduceDim(self, X: pd.DataFrame, num_comp: int, normalizer_copy: bool):
+    def reduceDim(self, X: pd.DataFrame, num_comp: int, normalizer_copy: bool, verbose: bool=True):
         lsa = make_pipeline(TruncatedSVD(n_components=num_comp), Normalizer(copy=normalizer_copy))
 
         t0 = time()
@@ -72,7 +74,8 @@ class DataPreprocessor:
         explained_variance = lsa[0].explained_variance_ratio_.sum()
         t1 = time() - t0
 
-        print(f"LSA done in {t1:.3f} s")
-        print(f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
+        if verbose:
+            print(f"LSA done in {t1:.3f} s")
+            print(f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
 
         return X_lsa, lsa
