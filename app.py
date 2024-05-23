@@ -42,8 +42,15 @@ class SynopsisForm(FlaskForm):
 def index():
     form = SynopsisForm()
     if form.validate_on_submit():
-        flash('Input Sent!')
-        return redirect(url_for('index'))
+        synopsis_data = form.synopsis.data
+
+        # Add call to model here
+
+        return render_template(
+            'index.html',
+            form=form,
+            button_form=ButtonForm(), result=synopsis_data
+        )
     return render_template(
         'index.html',
         form=form,

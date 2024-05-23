@@ -6,4 +6,11 @@
     <div class="form-container">
         {{ render_form(form, button_style='success', button_size='lg') }}
     </div>
+
+    {% if result %}
+    <h2>Results</h2>
+    <div class="alert alert-info mt-3">
+      {{ result }}
+    </div>
+  {% endif %}
 {% endblock %}
