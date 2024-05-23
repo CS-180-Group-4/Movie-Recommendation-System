@@ -1,9 +1,12 @@
 import pandas as pd
 import numpy as np
 
+from time import time
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from time import time
+from sklearn.decomposition import TruncatedSVD
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Normalizer
 
 class DataPreprocessor:
     def __init__(self, path_to_movies: str, path_to_genres: str):
@@ -18,7 +21,8 @@ class DataPreprocessor:
         df_count = df_unique_genres.groupby('genre').nunique()
 
         print("# of Genres: ", df_count.shape[0])
-        print("Unique Genres: ", df_count[0])
+        print("Unique Genres:")
+        print(df_count)
 
         return df_count
 
@@ -29,8 +33,8 @@ class DataPreprocessor:
         self.df_movies.drop(columns=["date", "tagline", "minute", "minute"], inplace=True)
         self.df_movies = self.df_movies[self.df_movies['description'].notna()]
 
-        print("Length: ", self.df_movies.shape[0])
-        print("Columns: ", self.df_movies.columns)
+        print("Reduced Length: ", self.df_movies.shape[0])
+        print("Reduced Columns: ", self.df_movies.columns)
     
     def splitData(self, test_size: float, rand_state: int):
         assert hasattr(self.df_movies, 'description') and hasattr(self.df_movies, 'genre')
@@ -58,4 +62,17 @@ class DataPreprocessor:
         print(f"# of Features: {X_tfidf.shape[1]}")
         print(f"% of Nonzero Entries: {X_tfidf.nnz / np.prod(X_tfidf.shape):.3f}")
 
-        return X_tfidf
+        return X_tfidf, vectorizer.get_feature_names_out()
+    
+    def reduceDim(self, X: pd.DataFrame, num_comp: int, normalizer_copy: bool):
+        lsa = make_pipeline(TruncatedSVD(n_components=num_comp), Normalizer(copy=normalizer_copy))
+
+        t0 = time()
+        X_lsa = lsa.fit_transform(X)
+        explained_variance = lsa[0].explained_variance_ratio_.sum()
+        t1 = time() - t0
+
+        print(f"LSA done in {t1:.3f} s")
+        print(f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
+
+        return X_lsa, lsa
