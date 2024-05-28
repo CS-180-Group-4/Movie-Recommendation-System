@@ -54,20 +54,13 @@ def index():
 
         # Add call to model here
 
-        # sample output
-        titles = [('USERNAME', 'Username'), 
-                    ('IDENTIFIER', 'Identifier'), 
-                    ('FIRST_NAME', 'First Name'),
-                    ('LAST_NAME', 'Last Name'),
-                ]
         data = csv_to_dict_list('sample.csv')
 
         return render_template(
             'index.html',
             form=form,
             button_form=ButtonForm(),
-            titles=titles,
-            result=data,
+            rows=data,
         )
     return render_template(
         'index.html',
