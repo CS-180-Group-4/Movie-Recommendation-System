@@ -8,7 +8,9 @@ from wtforms.fields import *
 from flask_bootstrap import Bootstrap5, SwitchField
 from flask_sqlalchemy import SQLAlchemy
 
+import pandas as pd
 import csv # temp
+from input_processor import processInput
 
 app = Flask(__name__)
 app.secret_key = 'dev'
@@ -37,7 +39,7 @@ class ButtonForm(FlaskForm):
     cancel = SubmitField()
 
 class SynopsisForm(FlaskForm):
-    synopsis = TextAreaField('Synopsis', validators=[DataRequired(), Length(1, 500)])
+    synopsis = TextAreaField('Synopsis', validators=[DataRequired(), Length(1, 2000)])
     submit = SubmitField()
 
 def csv_to_dict_list(file_path):
@@ -53,8 +55,10 @@ def index():
         synopsis_data = form.synopsis.data
 
         # Add call to model here
-
-        data = csv_to_dict_list('sample.csv')
+        cluster = processInput(synopsis_data)
+        clustered_movies = pd.read_csv('clustered_movies.csv')
+        recommendations = clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('rating', ascending=False).head(10)
+        data = recommendations.to_dict('records') # csv_to_dict_list('clustered_movies.csv')
 
         return render_template(
             'index.html',
