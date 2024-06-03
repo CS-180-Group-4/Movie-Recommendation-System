@@ -14,3 +14,7 @@ NORMALIZER_COPY = False
 N_CLUSTERS = 20
 MAX_ITER = 100
 N_INIT = 1
+
+OPTIMAL_K = 15
+
+CUSTOM_STOP_WORDS = {'lives', 'life', 'director', 'directed', 'film', 'films', 'filmmaker'}

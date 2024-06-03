@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm, CSRFProtect
 from wtforms.validators import DataRequired, Length
 from wtforms.fields import *
 from flask_bootstrap import Bootstrap5, SwitchField
-from input_processor import processInput, computeDistances
+from input_processor import processInput # computeDistances
 import csv
 
 app = Flask(__name__)
@@ -46,9 +46,12 @@ def index():
         synopsis_data = form.synopsis.data
 
         # Add call to model here
-        X_lsa, cluster = processInput(synopsis_data)
+        # X_lsa, cluster = processInput(synopsis_data)
         # clustered_movies = pd.read_csv('clustered_movies.csv')
-        recommendations = computeDistances(X_lsa, cluster) # clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('rating', ascending=False).head(10)
+        # recommendations = computeDistances(X_lsa, cluster) # clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('rating', ascending=False).head(10)
+
+        recommendations = processInput(synopsis_data)
+
         data = recommendations.to_dict('records') # csv_to_dict_list('clustered_movies.csv')
 
         return render_template(

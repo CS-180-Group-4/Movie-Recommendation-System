@@ -13,8 +13,11 @@ PATH_TO_SRC = "./src"
 if PATH_TO_SRC not in sys.path:
   sys.path.append(PATH_TO_SRC)
 
-from config import MAX_DF, MIN_DF, STOP_WORDS, N_COMPONENTS, NORMALIZER_COPY
+from config import MOVIES_PATH, GENRES_PATH, TEST_SIZE, RANDOM_STATE, MAX_DF, MIN_DF, STOP_WORDS, N_COMPONENTS, NORMALIZER_COPY, N_CLUSTERS, MAX_ITER, N_INIT, OPTIMAL_K
+from data_preprocessor import DataPreprocessor
+from data_clusterer import DataClusterer
 
+'''
 def vectorizeInput(input: str, stop_words: str=STOP_WORDS):
     d = {'description': [input]}
     X = pd.DataFrame(data=d)
@@ -25,6 +28,7 @@ def vectorizeInput(input: str, stop_words: str=STOP_WORDS):
         )
 
     X_tfidf = vectorizer.fit_transform(X_desc_only)
+    print(X_tfidf.shape)
 
     return X_tfidf
 
@@ -45,8 +49,8 @@ def findNearestCentroid(X_lsa: pd.DataFrame) -> int:
 
     for i in range(len(centroids)):
         dist = np.linalg.norm(X_lsa[0] - centroids[i])
-        print("Cluster: ", i)
-        print("Distance: ", dist)
+        # print("Cluster: ", i)
+        # print("Distance: ", dist)
 
         if dist < min_distance:
             min_distance = dist
@@ -69,14 +73,48 @@ def computeDistances(X_lsa: pd.DataFrame, cluster: int) -> pd.DataFrame:
     recommendations = clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('similarity', ascending=True).head(20)
 
     return recommendations # recommendations.to_csv('recommendations.csv')
+'''
 
 def processInput(input: str) -> int:
-    X_tfidf = vectorizeInput(input)
+    '''
+        X_tfidf = vectorizeInput(input)
 
-    X_lsa = reduceDim(X_tfidf)
-    cluster = findNearestCentroid(X_lsa)
+        X_lsa = reduceDim(X_tfidf)
+        cluster = findNearestCentroid(X_lsa)
 
-    return X_lsa, cluster
+        return X_lsa, cluster
+    '''
+    preprocessor = DataPreprocessor(MOVIES_PATH, GENRES_PATH)
+    preprocessor.handleDataFrame()
+
+    preprocessor.df_movies.loc[-1] = [None, None, None, input, None] # Set input as first row of data
+    preprocessor.df_movies.index += 1
+    preprocessor.df_movies.sort_index()
+
+    X_desc_only = preprocessor.df_movies.description
+
+    X_tfidf, features = preprocessor.vectorizeData(X_desc_only, MAX_DF, MIN_DF) # Vectorize
+    X_lsa, lsa = preprocessor.reduceDim(X_tfidf, N_COMPONENTS, NORMALIZER_COPY) # DimRed
+
+    clusterer = DataClusterer(X_lsa, N_CLUSTERS, MAX_ITER, N_INIT) 
+    centers, y_kmeans, inertia = clusterer.computeKMeans(OPTIMAL_K) # Cluster
+    clusterer.getClusters(OPTIMAL_K, centers, features, lsa)
+
+    distances = []
+
+    for i in range(len(X_lsa)):
+        dist = np.linalg.norm(X_lsa[0] - X_lsa[i])
+        distances.append(round(dist, 4))
+
+    X_clustered  = preprocessor.df_movies.assign(similarity=distances)
+    X_clustered = X_clustered.assign(cluster=y_kmeans)
+    recommendations = X_clustered.loc[X_clustered['cluster'] == X_clustered.loc[0]['cluster']].sort_values('similarity', ascending=True).head(20)
+
+    print("First: ", X_clustered.loc[0])
+
+    return recommendations
+
+    
 
 
 

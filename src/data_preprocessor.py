@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 
 from time import time
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, ENGLISH_STOP_WORDS
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
+
+from config import CUSTOM_STOP_WORDS
 
 class DataPreprocessor:
     def __init__(self, path_to_movies: str, path_to_genres: str):
@@ -47,11 +49,12 @@ class DataPreprocessor:
 
         return X_train, X_test, y_train, y_test
     
-    def vectorizeData(self, X: pd.DataFrame, max_df: float, min_df: int, stop_words: str, verbose: bool=True):
+    def vectorizeData(self, X: pd.DataFrame, max_df: float, min_df: int, custom_stop_words: dict=CUSTOM_STOP_WORDS, verbose: bool=True):
+        combined_stop_words = list(ENGLISH_STOP_WORDS.union(custom_stop_words))
         vectorizer = TfidfVectorizer(
             max_df=max_df,
             min_df=min_df,
-            stop_words=stop_words,
+            stop_words=combined_stop_words,
         )
 
         t0 = time()
