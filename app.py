@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
-from enum import Enum
-from flask import Flask, render_template, request, flash, redirect, url_for
-from markupsafe import Markup
+from flask import Flask, render_template
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms.validators import DataRequired, Length, Regexp
+from wtforms.validators import DataRequired, Length
 from wtforms.fields import *
 from flask_bootstrap import Bootstrap5, SwitchField
-from flask_sqlalchemy import SQLAlchemy
-
-import pandas as pd
-import csv # temp
 from input_processor import processInput, computeDistances
+import csv
 
 app = Flask(__name__)
 app.secret_key = 'dev'
-
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 
 # set default button sytle and size, will be overwritten by macro parameters
 app.config['BOOTSTRAP_BTN_STYLE'] = 'primary'
@@ -29,7 +21,6 @@ app.config['BOOTSTRAP_TABLE_DELETE_TITLE'] = 'Remove'
 app.config['BOOTSTRAP_TABLE_NEW_TITLE'] = 'Create'
 
 bootstrap = Bootstrap5(app)
-db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 
 class ButtonForm(FlaskForm):
@@ -39,7 +30,7 @@ class ButtonForm(FlaskForm):
     cancel = SubmitField()
 
 class SynopsisForm(FlaskForm):
-    synopsis = TextAreaField('Synopsis', validators=[DataRequired(), Length(1, 2000)])
+    synopsis = TextAreaField('', validators=[DataRequired(), Length(1, 2000)])
     submit = SubmitField()
 
 def csv_to_dict_list(file_path):
