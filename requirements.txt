@@ -1,8 +1,8 @@
 virtualenv
 flask
 bootstrap-flask
-flask-sqlalchemy
 flask-wtf
 scikit-learn
 pandas
 matplotlib
+gensim
