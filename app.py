@@ -10,7 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 import pandas as pd
 import csv # temp
-from input_processor import processInput
+from input_processor import processInput, computeDistances
 
 app = Flask(__name__)
 app.secret_key = 'dev'
@@ -55,9 +55,9 @@ def index():
         synopsis_data = form.synopsis.data
 
         # Add call to model here
-        cluster = processInput(synopsis_data)
-        clustered_movies = pd.read_csv('clustered_movies.csv')
-        recommendations = clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('rating', ascending=False).head(10)
+        X_lsa, cluster = processInput(synopsis_data)
+        # clustered_movies = pd.read_csv('clustered_movies.csv')
+        recommendations = computeDistances(X_lsa, cluster) # clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('rating', ascending=False).head(10)
         data = recommendations.to_dict('records') # csv_to_dict_list('clustered_movies.csv')
 
         return render_template(

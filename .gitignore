@@ -163,3 +163,4 @@ cython_debug/
 dataset/
 clustered_movies.csv 
 cluster_centers.npy
+vectorized_data.npy

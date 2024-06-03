@@ -54,13 +54,31 @@ def findNearestCentroid(X_lsa: pd.DataFrame) -> int:
 
     return cluster_min
 
+def computeDistances(X_lsa: pd.DataFrame, cluster: int) -> pd.DataFrame:
+    assert X_lsa.shape[0] == 1
+
+    vectorized = np.load('vectorized_data.npy')
+    clustered_movies = pd.read_csv('clustered_movies.csv')
+    distances = []
+
+    for i in range(len(vectorized)):
+        dist = np.linalg.norm(X_lsa[0] - vectorized[i])
+        distances.append(round(dist, 4))
+
+    clustered_movies = clustered_movies.assign(similarity=distances)
+    recommendations = clustered_movies.loc[clustered_movies['cluster'] == cluster].sort_values('similarity', ascending=True).head(20)
+
+    return recommendations # recommendations.to_csv('recommendations.csv')
+
 def processInput(input: str) -> int:
     X_tfidf = vectorizeInput(input)
 
     X_lsa = reduceDim(X_tfidf)
     cluster = findNearestCentroid(X_lsa)
-        
-    return cluster
+
+    return X_lsa, cluster
+
+
 
 
 
