@@ -161,4 +161,5 @@ cython_debug/
 
 # Dataset
 dataset/
-
+clustered_movies.csv 
+cluster_centers.npy

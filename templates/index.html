@@ -13,19 +13,23 @@
     <table id="data" class="table table-striped">
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Identifier</th>
-          <th>First Name</th>
-          <th>Last Name</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Genre</th>
+          <th>Rating</th>
+          <th>Cluster</th>
         </tr>
       </thead>
       <tbody>
         {% for row in rows %}
           <tr>
-            <td>{{ row['USERNAME'] }}</td>
-            <td>{{ row['IDENTIFIER'] }}</td>
-            <td>{{ row['FIRST_NAME'] }}</td>
-            <td>{{ row['LAST_NAME'] }}</td>
+            <td>{{ row['id'] }}</td>
+            <td>{{ row['name'] }}</td>
+            <td>{{ row['description'] }}</td>
+            <td>{{ row['genre'] }}</td>
+            <td>{{ row['rating'] }}</td>
+            <td>{{ row['cluster'] }}</td>
           </tr>
         {% endfor %}
       </tbody>
