@@ -110,8 +110,6 @@ def processInput(input: str) -> int:
     X_clustered = X_clustered.assign(cluster=y_kmeans)
     recommendations = X_clustered.loc[X_clustered['cluster'] == X_clustered.loc[0]['cluster']].sort_values('similarity', ascending=True).head(20)
 
-    print("First: ", X_clustered.loc[0])
-
     return recommendations
 
     

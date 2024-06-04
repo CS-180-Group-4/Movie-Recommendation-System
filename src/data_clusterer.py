@@ -39,7 +39,7 @@ class DataClusterer:
         inertias = []
 
         for i in range(1, self.max_clusters + 1):
-            _, _, inertia, _ = self.computeKMeans(i) # TRAINING PART FOR EACH NUMBER OF CLUSTERS i
+            _, _, inertia = self.computeKMeans(i) # TRAINING PART FOR EACH NUMBER OF CLUSTERS i
             inertias.append(inertia)
 
         if show_plot:
