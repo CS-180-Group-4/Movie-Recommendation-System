@@ -8,7 +8,7 @@ MAX_DF = 0.3 # Ignore terms that appear in > 30% of the entries
 MIN_DF = 3 # Ignore terms that appear in < 3 entries
 STOP_WORDS = "english"
 
-N_COMPONENTS = 50
+N_COMPONENTS = 20
 NORMALIZER_COPY = False
 
 N_CLUSTERS = 30
