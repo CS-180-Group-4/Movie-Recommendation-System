@@ -1,6 +1,6 @@
 # Setting Up a Python Virtual Environment (venv)
 
-This guide will walk you through the process of setting up a Python virtual environment (venv) for your project.
+This guide will walk you through the process of setting up a Python virtual environment (venv) for the project.
 
 ## Prerequisites
 
@@ -79,7 +79,7 @@ To deactivate the virtual environment, simply run:
 deactivate
 ```
 
-## Additional Tips
+## Additional Necessities
 
 ### Using a `requirements.txt` File
 
